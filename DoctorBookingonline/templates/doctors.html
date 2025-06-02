@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Our Doctors</title>
+    <style>
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fc;
+    color: #333;
+}
+
+/* Header Styling */
+header {
+    background-color: #e6f3ff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header img {
+    width: 150px;
+    height: 70px;
+}
+
+header h3 a {
+    text-decoration: none;
+    color: #0056b3;
+    margin: 0 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+header h3 a:hover {
+    color: #003d80;
+}
+
+/* Horizontal Line */
+hr {
+    border: none;
+    height: 2px;
+    background-color: blue;
+    margin: 20px 0;
+}
+
+/* Page Heading */
+h2 {
+    text-align: center;
+    color: #003d80;
+    margin-bottom: 30px;
+}
+
+/* Table Styling */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #0056b3;
+    color: white;
+    font-size: 18px;
+}
+
+td {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Table Row Hover Effect */
+tr:hover {
+    background-color: #f1f8ff;
+}
+
+/* Doctor Images */
+img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* "View More" Button */
+a.view-more {
+    text-decoration: none;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+a.view-more:hover {
+    background-color: #0056b3;
+}
+
+/* Footer */
+footer {
+    background-color: #e6f3ff;
+    text-align: center;
+    padding: 15px;
+    margin-top: 30px;
+}
+
+footer h3 {
+    color: #0056b3;
+    margin: 0;
+}
+
+marquee {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+    
+    </style>
+</head>
+
+<body>
+    <header>
+        <center>
+ <img src="{{ url_for('static', filename='logo-procto.png') }}" alt="Procto Logo" width="150px" height="70px">
+        </center>
+        <h3>
+            <a href="{{ url_for('patient_dashboard') }}">Home</a> |
+            <a href="{{ url_for('doctors') }}">Doctors</a> |
+        
+        <a href="{{ url_for('branches') }}">Branches</a>
+            
+            <a href="{{ url_for('logout') }}">Logout</a>
+
+        </h3>
+    </header>
+
+    <hr>
+
+    <h2>Meet Our Expert Doctors</h2>
+    <p style="text-align: center; font-size: 16px; color: #555;">
+        Highly experienced doctors ready to provide exceptional care.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Photo</th>
+                <th>Specialization</th>
+                <th>More Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doctor in doctors %}
+            <tr>
+                <td>{{ doctor['username'] }}</td>
+                <td>
+                    {% if doctor['photo'] %}
+                        <img src="{{ url_for('static', filename='uploads/' + doctor['photo']) }}" 
+                             alt="{{ doctor['username'] }}">
+                    {% else %}
+                        <i>No Image</i>
+                    {% endif %}
+                </td>
+                <td>{{ doctor['specialization'] }}</td>
+                <td>
+                    {% if doctor['more_details'] %}
+                        <a href="{{ doctor['more_details'] }}" target="_blank">View More</a>
+                    {% else %}
+                        <i>No Details</i>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <footer>
+        <h3>Stay Healthy!</h3>
+        <marquee>Consult the best doctors for your health</marquee>
+    </footer>
+</body>
+
+</html>

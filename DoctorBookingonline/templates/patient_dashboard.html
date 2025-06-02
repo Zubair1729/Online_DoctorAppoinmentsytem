@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - ProctoV1</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+
+        header {
+            background-color: #e6f3ff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header img {
+            width: 150px;
+            height: 70px;
+        }
+
+        .navbar {
+            text-align: center;
+            background-color: #0056b3;
+            padding: 15px 0;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            margin: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            color: #ffdd57;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background-color: blue;
+            margin: 30px 0;
+        }
+
+        .content {
+            text-align: center;
+            margin: 40px auto;
+            width: 90%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #003d80;
+        }
+
+        h3.red {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .button-container a {
+            text-decoration: none;
+            background-color: #0056b3;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 18px;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .button-container a:hover {
+            background-color: #003d80;
+            transform: scale(1.05);
+        }
+
+        /* Flash Messages Styling */
+        .alert-container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #3e8e41;
+        }
+
+        .alert-danger {
+            background-color: #f44336;
+            color: white;
+            border-color: #d32f2f;
+        }
+
+        .alert-warning {
+            background-color: #ff9800;
+            color: white;
+            border-color: #e68900;
+        }
+
+        .alert-info {
+            background-color: #2196F3;
+            color: white;
+            border-color: #1976D2;
+        }
+
+        footer {
+            background-color: #e6f3ff;
+            text-align: center;
+            padding: 10px;
+            margin-top: 30px;
+        }
+
+        footer h3 {
+            color: #0056b3;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <center>
+            <img src="{{ url_for('static', filename='logo-procto.png') }}" alt="Procto Logo">
+        </center>
+    </header>
+
+    <div class="navbar">
+        <a href="{{ url_for('patient_dashboard') }}">Home</a>
+        <a href="{{ url_for('doctors') }}">Doctors</a>
+        <a href="{{ url_for('branches') }}">Branches</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <hr>
+
+
+
+    <div class="content">
+        <h1>Welcome, {{ username if username else 'Patient' }}</h1>
+        <h3 class="red">
+            Very easy to book, maintain history. Hassle-free from<br>
+            older versions of booking appointments via telephone.<br>
+            Procto makes it simple!
+        </h3>
+
+        <div class="button-container">
+            <h2>Click below to book a slot:</h2>
+            <a href="{{ url_for('booking') }}">Book Appointment</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <h3>COPYRIGHT @ OUR PROJECT 2024</h3>
+    </footer>
+
+</body>
+
+</html>

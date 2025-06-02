@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<style>
+    /* Dropdown container */
+    .dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    /* Dropdown button */
+    .dropdown-btn {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    /* Dropdown content */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        width: 100%;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+
+    /* Each branch option */
+    .dropdown-content div {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    /* Hover effect */
+    .dropdown-content div:hover {
+        background-color: #f1f1f1;
+    }
+
+    #customSpecializationField {
+        margin-top: 10px;
+    }
+
+
+    /* Branch address styling */
+    .branch-address {
+        display: block;
+        font-size: 12px;
+        color: grey;
+    }
+
+    /* Hidden input fields */
+    #custom-branch-fields {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Register</h2> <!-- Flash Messages (Validation Errors) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <!-- Role Selection -->
+            <div class="form-group">
+                <label>Register as:</label><br>
+                <input type="radio" name="role" value="doctor" id="doctor" onchange="toggleRoleFields()" required
+                    checked> Doctor
+                <input type="radio" name="role" value="patient" id="patient" onchange="toggleRoleFields()" required>
+                Patient
+            </div>
+
+            <!-- Doctor: Username -->
+            <div class="form-group doctor-field">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" name="username" id="username" placeholder="Enter username">
+            </div>
+
+            <!-- Patient: Full Name -->
+            <div class="form-group patient-field">
+                <label for="name">Full Name:</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Enter your name">
+            </div>
+
+            <!-- Patient: Phone Number -->
+            <div class="form-group patient-field">
+                <label for="phone_number">Phone Number:</label>
+                <input type="tel" class="form-control" name="phone_number" id="phone_number"
+                    placeholder="Enter your phone number">
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" name="password" id="password" required
+                    placeholder="Enter password">
+            </div>
+
+            <!-- Doctor: Specialization -->
+            <div class="form-group doctor-field">
+                <label for="specialization">Specialization:</label>
+                <select class="form-control" name="specialization" id="specialization"
+                    onchange="toggleCustomSpecialization()">
+                    <option value="" disabled selected>Select Specialization</option>
+                    <option value="General Physician">General Physician</option>
+                    <option value="Cardiologist">Cardiologist</option>
+                    <option value="Dermatologist">Dermatologist</option>
+                    <option value="Neurologist">Neurologist</option>
+                    <option value="Pediatrician">Pediatrician</option>
+                    <option value="Orthopedic">Orthopedic</option>
+                    <option value="Psychiatrist">Psychiatrist</option>
+                    <option value="other">Other (Specify Below)</option>
+                </select>
+            </div>
+
+            <!-- Custom Specialization -->
+            <div class="form-group doctor-field custom-specialization" id="customSpecializationField"
+                style="display: none;">
+                <label for="custom_specialization">Specify Your Specialization:</label>
+                <input type="text" class="form-control" name="custom_specialization" id="custom_specialization"
+                    placeholder="Enter your specialization">
+            </div>
+            <!-- Doctor: Branch Selection -->
+
+            <!-- Branch Selection -->
+            <div class="form-group doctor-field">
+                <label for="branch">Branch:</label>
+                <div class="dropdown">
+                    <button type="button" class="dropdown-btn" onclick="toggleDropdown()">Select Branch</button>
+                    <div class="dropdown-content" id="branchDropdown">
+                        {% for branch in branches %}
+                        <div onclick="selectBranch('{{ branch.name }}', '{{ branch.address }}', false)">
+                            <strong>{{ branch.name }}</strong>
+                            <span class="branch-address">{{ branch.address }}</span>
+                        </div>
+                        {% endfor %}
+                        <div onclick="selectBranch('Custom Branch', '', true)">
+                            <strong>Custom Branch</strong>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="branch" id="branch">
+            </div>
+
+            <!-- Branch Address Box (Initially Hidden) -->
+            <div id="branch-address"></div>
+
+            <!-- Custom Branch Fields (Initially Hidden) -->
+            <div id="custom-branch-fields" style="display: none;">
+                <div class="form-group">
+                    <label for="custom_branch_name">Branch Name:</label>
+                    <input type="text" class="form-control" name="custom_branch_name" id="custom_branch_name"
+                        oninput="updateCustomBranch()">
+                </div>
+                <div class="form-group">
+                    <label for="custom_branch_address">Branch Address:</label>
+                    <input type="text" class="form-control" name="custom_branch_address" id="custom_branch_address"
+                        oninput="updateCustomBranch()">
+                </div>
+            </div>
+
+
+
+            <!-- Profile Photo -->
+            <div class="form-group doctor-field">
+                <label for="photo">Profile Photo (Optional):</label>
+                <div class="text-center">
+                    <img id="imageInserter"
+                        src="https://static.vecteezy.com/system/resources/previews/004/640/699/non_2x/circle-upload-icon-button-isolated-on-white-background-vector.jpg"
+                        alt="Upload Image" class="img-thumbnail" style="cursor: pointer; max-width: 150px;"
+                        onclick="document.getElementById('photo').click();">
+                </div>
+                <input type="file" class="form-control-file" name="photo" id="photo" accept="image/*"
+                    style="display: none;" onchange="previewImage(event)">
+            </div>
+
+            <!-- More Details -->
+            <div class="form-group doctor-field">
+                <label for="more_details">More Details (Link):</label>
+                <input type="url" class="form-control" name="more_details" id="more_details"
+                    placeholder="Paste a link (optional)">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+
+        <a href="{{ url_for('home') }}" class="btn btn-secondary mt-3">Home</a>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+// Image Preview Function
+function previewImage(event) {
+    const imagePreview = document.getElementById("imageInserter");
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Set default selection and apply field visibility
+    let doctorRadio = document.getElementById("doctor");
+    if (doctorRadio) {
+        doctorRadio.checked = true;
+        toggleRoleFields();
+    }
+    toggleRoleFields();
+    toggleCustomSpecialization();
+
+    // Branch dropdown change event listener
+    const branches = JSON.parse('{{ branches | tojson | safe }}');
+    const branchSelect = document.getElementById("branch");
+    const branchAddressField = document.getElementById("branch_address");
+
+    if (branchSelect) {
+        branchSelect.addEventListener("change", function () {
+            const selectedBranch = branchSelect.value;
+            const branchData = branches.find(b => b.name === selectedBranch);
+
+            branchAddressField.value = branchData ? branchData.address : "Address not found!";
+        });
+    }
+});
+
+// Toggle Fields Based on Role Selection
+function toggleRoleFields() {
+    const doctorFields = document.querySelectorAll(".doctor-field");
+    const patientFields = document.querySelectorAll(".patient-field");
+    const role = document.querySelector('input[name="role"]:checked').value;
+
+    if (role === "patient") {
+        doctorFields.forEach(field => field.style.display = "none");
+        patientFields.forEach(field => field.style.display = "block");
+    } else {
+        doctorFields.forEach(field => field.style.display = "block");
+        patientFields.forEach(field => field.style.display = "none");
+    }
+}
+
+// Toggle Branch Dropdown
+function toggleDropdown() {
+    const dropdown = document.getElementById("branchDropdown");
+    dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+}
+
+// Select Branch from Dropdown
+function selectBranch(name, address, isCustom) {
+    const button = document.querySelector(".dropdown-btn");
+    const branchField = document.getElementById("branch");
+    const customFields = document.getElementById("custom-branch-fields");
+    const dropdown = document.getElementById("branchDropdown");
+
+    dropdown.style.display = "none"; // Close dropdown after selection
+
+    if (isCustom) {
+        customFields.style.display = "block"; // Show custom branch fields
+        button.innerHTML = `<strong>Custom Branch</strong>`;
+        branchField.value = "custom";  // Must match backend check
+    } else {
+        customFields.style.display = "none"; // Hide custom input fields
+        button.innerHTML = `<strong>${name}</strong><br><span class="branch-address">${address}</span>`;
+        branchField.value = name; // Set selected branch name in the hidden input
+    }
+}
+
+// Update Custom Branch Input
+function updateCustomBranch() {
+    const customName = document.getElementById("custom_branch_name").value.trim();
+    const customAddress = document.getElementById("custom_branch_address").value.trim();
+    const button = document.querySelector(".dropdown-btn");
+    const branchField = document.getElementById("branch");
+
+    if (customName !== "") {
+        button.innerHTML = `<strong>${customName}</strong><br><span class="branch-address">${customAddress}</span>`;
+        branchField.value = "custom";  // Set to "custom" to match backend check
+    } else {
+        branchField.value = "";  // Clear if empty
+    }
+}
+
+// Toggle Custom Specialization Field
+function toggleCustomSpecialization() {
+    const specializationDropdown = document.getElementById('specialization');
+    const customSpecializationField = document.getElementById('customSpecializationField');
+
+    if (specializationDropdown && specializationDropdown.value === "other") {
+        customSpecializationField.style.display = "block";
+    } else {
+        customSpecializationField.style.display = "none";
+        const customSpecInput = document.getElementById('custom_specialization');
+        if (customSpecInput) {
+            customSpecInput.value = "";
+        }
+    }
+}
+
+    </script>
+
+</body>
+
+</html>

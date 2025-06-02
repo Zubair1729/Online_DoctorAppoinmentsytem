@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+<script>
+    function updateBranch() {
+        var doctorSelect = document.getElementById('doctor');
+        var branchDisplay = document.getElementById('branch-display');
+        var branchAddressDisplay = document.getElementById('branch-address-display');
+
+        var selectedBranch = doctorSelect.options[doctorSelect.selectedIndex].getAttribute('data-branch');
+        var selectedBranchAddress = doctorSelect.options[doctorSelect.selectedIndex].getAttribute('data-branch-address');
+
+        branchDisplay.textContent = "Branch: " + (selectedBranch || "No branch assigned");
+        branchAddressDisplay.textContent = "Branch Address: " + (selectedBranchAddress || "No address available");
+    }
+</script>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 20px;
+}
+
+.form-container {
+  max-width: 450px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+label {
+  display: block;
+  margin: 15px 0 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1.5px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+select:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+.branch-container {
+  margin-top: 12px;
+  background: #eef6ff;
+  border: 1px solid #b3d1ff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+.branch-container p {
+  margin: 5px 0;
+}
+
+button[type="submit"] {
+  margin-top: 25px;
+  width: 100%;
+  background-color: #007BFF;
+  border: none;
+  color: white;
+  padding: 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.flash-message {
+  max-width: 450px;
+  margin: 0 auto 15px auto;
+  padding: 12px 15px;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.flash-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.flash-message.danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+a {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+</style>
+</head>
+<body>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Booking Form -->
+    <div class="form-container">
+        <h1>Book Your Appointment</h1>
+        <form action="{{ url_for('book_appointment') }}" method="post">
+            
+            <!-- Patient Name -->
+            <label for="name">Patient Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+            <!-- Select Doctor -->
+  <label for="doctor">Select Doctor:</label>
+<select id="doctor" name="doctor" required onchange="updateBranch()">
+    <option value="" disabled selected>Select Doctor</option>
+    {% for doctor in doctors %}
+        <option value="{{ doctor['_id'] }}" 
+                data-branch="{{ doctor['branch'] }}" 
+                data-branch-address="{{ doctor['branch_address'] }}">
+            Dr. {{ doctor['username'] }}
+        </option>
+    {% endfor %}
+</select>
+            <!-- Branch Display -->
+<div class="branch-container">
+    <p id="branch-display">Branch: Please select a doctor</p>
+    <p id="branch-address-display">Branch Address: </p> <!-- Added branch address display -->
+</div>
+            <!-- Booking Date -->
+            <label for="date">Select Booking Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <!-- Booking Time -->
+            <label for="time">Select Booking Time:</label>
+            <input type="time" id="time" name="time" required>
+
+            <!-- Submit Button -->
+            <button type="submit">Book Now</button>
+        </form>
+
+        <a href="{{ url_for('home') }}" style="display: block; text-align: center; margin-top: 20px;">Home</a>
+    </div>
+
+</body>
+</html>

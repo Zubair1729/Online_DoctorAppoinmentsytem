@@ -1,0 +1,169 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Doctor Profile</title>  
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">  
+</head>  
+
+<style>  
+    body {  
+        font-family: Arial, sans-serif;  
+        margin: 0;  
+        padding: 0;  
+        display: flex;  
+    }  
+
+    .header {  
+        width: 100%;  
+        background-color: #4CAF50;  
+        color: white;  
+        text-align: center;  
+        padding: 10px 0;  
+        position: fixed;  
+        top: 0;  
+        left: 0;  
+    }  
+
+    .sidebar {  
+        width: 200px;  
+        background: #333;  
+        height: 100vh;  
+        padding: 20px;  
+        position: fixed;  
+        top: 40px;  
+        left: 0;  
+    }  
+
+    .sidebar a {  
+        display: block;  
+        color: white;  
+        text-decoration: none;  
+        padding: 10px;  
+        margin: 10px 0;  
+        background: #555;  
+    }  
+
+    .sidebar a:hover {  
+        background: #777;  
+    }  
+
+    .logout-btn {  
+        background: red;  
+        color: white;  
+        text-align: center;  
+    }  
+
+    .main-content {  
+        margin-left: 220px;  
+        padding: 20px;  
+        flex: 1;  
+    }  
+
+    .profile-container {  
+        border: 1px solid #ddd;  
+        padding: 20px;  
+        background: #f9f9f9;  
+        max-width: 400px;  
+    }  
+
+    .profile-pic {  
+        width: 100px;  
+        height: 100px;  
+        border-radius: 50%;  
+        display: block;  
+        margin-top: 10px;  
+    }  
+
+    .edit-btn, .save-btn {  
+        background: #4CAF50;  
+        color: white;  
+        padding: 10px;  
+        border: none;  
+        cursor: pointer;  
+        margin-top: 10px;  
+    }  
+
+    .edit-form {  
+        display: none;  
+        margin-top: 20px;  
+    }  
+
+    .show {  
+        display: block;  
+    }  
+</style>  
+
+<body>  
+    <div class="header">Doctor Dashboard</div>  
+
+    <div class="sidebar">  
+        <a href="{{ url_for('home') }}">Home</a>  
+            <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>  
+        <a href="{{ url_for('appointments') }}">Appointments</a>  
+        <a href="{{ url_for('patients') }}">Patients</a>  
+        <a href="{{ url_for('profile') }}">Profile</a>  
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>  
+    </div>  
+
+    <div class="main-content">  
+        <div class="title">Profile</div>  
+
+        <div class="profile-container">  
+            <h3>Dr. {{ doctor["username"] }}</h3>  
+            <p><strong>Specialization:</strong> {{ doctor["specialization"] }}</p>  
+            <p><strong>More Details:</strong> {{ doctor["more_details"] }}</p>  
+
+            <!-- Displaying Current Branch Information -->
+            {% if "branch" in doctor %}
+                <p><strong>Branch:</strong> {{ doctor["branch"] }}</p>  
+                <p><strong>Address:</strong> {{ doctor["branch_address"] }}</p>  
+            {% else %}
+                <p><strong>Branch:</strong> Not Assigned</p>
+            {% endif %}
+
+            <!-- Profile Picture -->
+            {% if doctor["photo"] %}  
+                <img src="{{ url_for('static', filename='uploads/' + doctor['photo']) }}" alt="Profile Photo" class="profile-pic">  
+            {% else %}  
+                <p>No profile picture uploaded</p>  
+            {% endif %}  
+
+            <button class="edit-btn" onclick="toggleEdit()">Edit Profile</button>  
+
+            <!-- Edit Profile Form -->  
+            <form action="{{ url_for('profile') }}" method="POST" enctype="multipart/form-data" class="edit-form">
+                <label>Specialization:</label>
+                <input type="text" name="specialization" value="{{ doctor['specialization'] }}" required>
+
+                <label>More Details:</label>
+                <textarea name="more_details" rows="3">{{ doctor['more_details'] }}</textarea>
+
+                <label for="branch">Select Branch:</label>
+                <select id="branch" name="branch" required>
+                    <option value="" disabled>Select Branch</option>
+                    {% for branch in branches %}
+                        <option value="{{ branch['_id'] }}" 
+                                {% if "branch" in doctor and doctor["branch"] == branch["_id"] %}selected{% endif %}>
+                            {{ branch['name'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label>Profile Photo:</label>
+                <input type="file" name="photo" accept="image/*">
+
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>  
+ <a href="{{ url_for('doctor_dashboard') }}">Dashboard |</a>
+    </div>  
+
+    <script>  
+        function toggleEdit() {  
+            document.querySelector(".edit-form").classList.toggle("show");  
+        }  
+    </script>  
+</body>  
+</html>
