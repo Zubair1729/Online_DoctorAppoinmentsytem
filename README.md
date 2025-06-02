@@ -1,4 +1,4 @@
-#Online_DoctorAppoinment
+# Online_DoctorAppoinment
 
 A little intermediate web app created by using HTML with internal CSS,JS 
 and for backend used Flask framework and database as MongoDB Atlas 
